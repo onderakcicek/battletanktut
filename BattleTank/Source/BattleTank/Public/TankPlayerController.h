@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Onders copyright
 
 #pragma once
 
@@ -7,17 +7,22 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h" // must be the last include
 
-class ATank;
+class UTankAimingComponent;
+
 /**
- * 
+ * responsible for helping the player aim.
  */
 UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
+
 private:
-	ATank* GetControlledTank() const;
+
 
 	virtual void BeginPlay() override;
 
@@ -29,14 +34,14 @@ private:
 	// return an OUT parameter, true if hit lands
 	bool GetSightRayHitLocation(FVector& HitLocation) const;
 
-	UPROPERTY(EditAnywhere)
-		float CrosshairXLocation = 0.5;
+	UPROPERTY(EditDefaultsOnly)
+	float CrosshairXLocation = 0.5;
 
-	UPROPERTY(EditAnywhere)
-		float CrosshairYLocation = 0.33333;
+	UPROPERTY(EditDefaultsOnly)
+	float CrosshairYLocation = 0.33333;
 
-	UPROPERTY(EditAnywhere)
-		float LineTraceRange = 1000000.0;
+	UPROPERTY(EditDefaultsOnly)
+	float LineTraceRange = 1000000.0;
 
 	FVector2D(ScreenLocation);
 
