@@ -3,6 +3,7 @@
 #include "TankPlayerController.h"
 #include "TankAimingComponent.h"
 #include "BattleTank.h"
+#include "Tank.h" 
 #include "Engine/World.h"
 
 
@@ -20,6 +21,25 @@ void ATankPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	AimTowardsCrosshair();
 }
+
+void ATankPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+
+		// subscribe our local method to tanks's death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankPlayerController::OnMyTankDeath);
+	}
+}
+
+void ATankPlayerController::OnMyTankDeath()
+{
+	StartSpectatingOnly();
+}
+
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
@@ -63,7 +83,7 @@ bool ATankPlayerController::GetLookVectorDirection(FVector LookDirection, FVecto
 			HitResult,
 			StartLocation,
 			EndLocation,
-			ECollisionChannel::ECC_Visibility)
+			ECollisionChannel::ECC_Camera)
 		)
 	{
 		HitLocation = HitResult.Location;
